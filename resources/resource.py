@@ -1,6 +1,7 @@
 from flask_restful import Resource
+from db.models import Record
 
 
 class QueryAlbum(Resource):
     def get(self):
-        return {"test": "test"}, 200
+        return Record.query.all()
