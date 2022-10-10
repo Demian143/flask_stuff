@@ -1,29 +1,31 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_restful import Api
-from crud import hello_world
 
 app = Flask(__name__)
 
 
-def create_app(app) -> Flask:
-    api = Api()
-    add_rsc(api)
-    api.init_app(app)
-
-    db = SQLAlchemy()
-    app_config(app)
-    db.init_app(app)
+def create_app(app: Flask) -> Flask:
+    init_db(app)
+    init_api(app)
 
     return app
 
 
-def app_config(app):
+def init_db(app: Flask) -> Flask:
+    from db.models import db
     app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://aori143:postgres@0.0.0.0:5432/postgres"
 
+    db.init_app(app)
 
-def add_rsc(api):
-    api.add_resource(hello_world.HelloWorld, '/')
+    with app.app_context():
+        db.create_all()
+
+
+def init_api(app: Flask):
+    api = Api()
+    from resources import resource
+    api.add_resource(resource.QueryAlbum, '/')
+    api.init_app(app)
 
 
 if __name__ == '__main__':
