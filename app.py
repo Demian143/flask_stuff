@@ -24,7 +24,7 @@ def init_db(app: Flask) -> Flask:
 def init_api(app: Flask):
     api = Api()
     from resources import resource
-    api.add_resource(resource.QueryAlbum, '/')
+    api.add_resource(resource.QueryAlbum, '/albums/')
     api.init_app(app)
 
 
