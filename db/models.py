@@ -5,7 +5,6 @@ db = SQLAlchemy()
 
 
 class Record(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    band = db.Column(db.String(100), unique=True)
+    band = db.Column(db.String(100), unique=True, primary_key=True)
     album = db.Column(db.String(100), unique=True)
     genre = db.Column(db.String(100))
