@@ -4,7 +4,23 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-class Record(db.Model):
-    band = db.Column(db.String(100), unique=True, primary_key=True)
-    album = db.Column(db.String(100), unique=True)
+class Album(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
     genre = db.Column(db.String(100))
+
+    # relationship
+    band = db.relationship('Band', backref='')
+
+
+class Songs(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    song = db.Column(db.String(100))
+
+    # relationship
+
+
+class Band(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    band = db.Column(db.String(100), unique=True)
+
+    # relationship
