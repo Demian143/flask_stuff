@@ -6,21 +6,33 @@ db = SQLAlchemy()
 
 class Album(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    genre = db.Column(db.String(100))
+    name = db.Column(db.String(255))
 
     # relationship
-    band = db.relationship('Band', backref='')
+    band = db.relationship('Band', backref='album', lazy=True)
+    song = db.relationship('Song', backref='album', lazy=True)
+    genre = db.relationship('Genre', backref='album', lazy=True)
 
 
-class Songs(db.Model):
+class Song(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    song = db.Column(db.String(100))
+    name = db.Column(db.String(100))
 
     # relationship
+    album_id = db.Column(db.Integer, db.ForeignKey('album.id'))
 
 
 class Band(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    band = db.Column(db.String(100), unique=True)
+    name = db.Column(db.String(100), unique=True)
 
     # relationship
+    album_id = db.Column(db.Integer, db.ForeignKey('album.id'))
+
+
+class Genre(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    genre = db.Column(db.String(100), unique=True)
+
+    # relationship
+    album_id = db.Column(db.Integer, db.ForeignKey('album.id'))
