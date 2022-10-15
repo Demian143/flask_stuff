@@ -23,9 +23,17 @@ def init_db(app: Flask) -> Flask:
 
 def init_api(app: Flask):
     api = Api()
-    from resources import resource
-    api.add_resource(resource.QueryAlbum, '/albums/')
+    add_resource(api)
     api.init_app(app)
+
+
+def add_resource(api: Api):
+    from resources import resource
+
+    api.add_resource(resource.QueryAlbums, '/albums/')
+    api.add_resource(resource.QuerySongs, '/songs/')
+    api.add_resource(resource.QueryBands, '/bands/')
+    api.add_resource(resource.QueryGenres, '/genres/')
 
 
 if __name__ == '__main__':
