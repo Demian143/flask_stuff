@@ -8,10 +8,10 @@ class Album(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
 
-    # relationship
-    band = db.relationship('Band', backref='album', lazy=True)
-    song = db.relationship('Song', backref='album', lazy=True)
-    genre = db.relationship('Genre', backref='album', lazy=True)
+    # ForeignKeys
+    song_id = db.Column(db.Integer, db.ForeignKey('song.id'))
+    band_id = db.Column(db.Integer, db.ForeignKey('band.id'))
+    genre_id = db.Column(db.Integer, db.ForeignKey('genre.id'))
 
 
 class Song(db.Model):
@@ -19,7 +19,7 @@ class Song(db.Model):
     name = db.Column(db.String(100))
 
     # relationship
-    album_id = db.Column(db.Integer, db.ForeignKey('album.id'))
+    relation = db.relationship('Album', backref='song', lazy=True)
 
 
 class Band(db.Model):
@@ -27,7 +27,7 @@ class Band(db.Model):
     name = db.Column(db.String(100), unique=True)
 
     # relationship
-    album_id = db.Column(db.Integer, db.ForeignKey('album.id'))
+    relation = db.relationship('Album', backref='band', lazy=True)
 
 
 class Genre(db.Model):
@@ -35,4 +35,4 @@ class Genre(db.Model):
     genre = db.Column(db.String(100), unique=True)
 
     # relationship
-    album_id = db.Column(db.Integer, db.ForeignKey('album.id'))
+    relation = db.relationship('Album', backref='genre', lazy=True)
