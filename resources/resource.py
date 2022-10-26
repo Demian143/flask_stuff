@@ -61,7 +61,12 @@ class QuerySongs(Resource):
         # example: GET /songs/?name='shove it'
         name = request.args.get('name')
         if name:
-            song = db.get_or_404(Song, name)
+            song = db.one_or_404(db.select(Song).filter_by(name=name))
+            return schema(song)
+
+        id = request.args.get('id')
+        if id:
+            song = db.one_or_404(db.select(Song).filter_by(id=id))
             return schema(song)
 
         else:
@@ -76,6 +81,19 @@ class QuerySongs(Resource):
             db.session.commit()
 
             return schema(new_song)
+
+    def delete(self):
+        # example: DELETE /songs/?name='shove it'
+        name = request.args.get('name')
+        if name:
+            song = db.one_or_404(db.select(Song).filter_by(name=name))
+            db.session.delete(song)
+            db.session.commit()
+
+            return schema(song)
+
+        else:
+            return {"message": "No album found, try adding ?name=<song> after the url."}
 
 
 class QueryBands(Resource):
