@@ -6,11 +6,19 @@ from resources.schema import schema, album_schema, genre_schema
 
 class QueryAlbums(Resource):
     def get(self):
-        # example: GET /albums/?name='deftones'
+        # example: GET /albums/?name='deftones' or /albums/?id=3
         name = request.args.get('name')
         if name:
-            album = db.get_or_404(Album, name)
+            album = db.one_or_404(db.select(Album).filter_by(name=name))
             return album_schema(album)
+
+        id = request.args.get('id')
+        if id:
+            album = db.one_or_404(db.select(Album).filter_by(id=id))
+            return album_schema(album)
+
+        else:
+            return {"message": "No album found, try adding ?name=<album> after the url."}
 
     def post(self):
         # example: POST /albums/?name='homs'&song_id=1&band_id=1&genre_id=2
@@ -28,8 +36,24 @@ class QueryAlbums(Resource):
 
             db.session.add(new_album)
             db.session.commit()
+
+            album = db.one_or_404(db.select(Album).filter_by(name=name))
+            return album_schema(album)
         else:
-            return "At least one name is needed to register a new album"
+            return {"message": "At least one name is required."}
+
+    def delete(self):
+        # example: DELETE /albums/?name='deftones'
+        name = request.args.get('name')
+        if name:
+            album = db.one_or_404(db.select(Album).filter_by(name=name))
+            db.session.delete(album)
+            db.session.commit()
+
+            return album_schema(album)
+
+        else:
+            return {"message": "No album found, try adding ?name=<album> after the url."}
 
 
 class QuerySongs(Resource):
@@ -39,6 +63,9 @@ class QuerySongs(Resource):
         if name:
             song = db.get_or_404(Song, name)
             return schema(song)
+
+        else:
+            return {"message": "No song found, try adding ?name=<song> after the url."}
 
     def post(self):
         # example: POST /songs/?name='shove it'
@@ -58,6 +85,8 @@ class QueryBands(Resource):
         if name:
             band = db.get_or_404(Band, name)
             return schema(band)
+        else:
+            return {"message": "No band found, try adding ?name=<band> after the url."}
 
     def post(self):
         # example: POST /bands/?name='deftones'
@@ -73,10 +102,13 @@ class QueryBands(Resource):
 class QueryGenres(Resource):
     def get(self):
         # example: GET /genres/?name='Nu Metal'
+        breakpoint()
         name = request.args.get('name')
         if name:
             genre = db.get_or_404(Genre, name)
             return genre_schema(genre)
+        else:
+            return {"message": "No genre found, try adding ?genre=<genre> after the url."}
 
     def post(self):
         # example: POST /genres/?name='Nu Metal'
