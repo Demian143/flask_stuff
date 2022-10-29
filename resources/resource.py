@@ -23,16 +23,13 @@ class QueryAlbums(Resource):
     def post(self):
         # example: POST /albums/?name='homs'&song_id=1&band_id=1&genre_id=2
         name = request.args.get('name')
-        song_id = request.args.get('song_id')
-        band_id = request.args.get('band_id')
-        genre_id = request.args.get('genre_id')
+        # song_id = request.args.get('song_id')
+        # band_id = request.args.get('band_id')
+        # genre_id = request.args.get('genre_id')
 
+        # breakpoint()
         if name:
-            # You need at least the name to register a new album
-            new_album = Album(name=name,
-                              song_id=song_id,
-                              band_id=band_id,
-                              genre_id=genre_id)
+            new_album = Album(name=name)
 
             db.session.add(new_album)
             db.session.commit()
@@ -54,6 +51,31 @@ class QueryAlbums(Resource):
 
         else:
             return {"message": "No album found, try adding ?name=<album> after the url."}
+
+    def patch(self):
+        # example: POST /albums/?id=<1>&<key>=<value>
+        name = request.args.get('name')
+        song_id = request.args.get('song_id')
+        band_id = request.args.get('band_id')
+        genre_id = request.args.get('genre_id')
+
+        # breakpoint()
+        id = request.args.get('id')
+        if id:
+            album = db.one_or_404(db.select(Album).filter_by(id=id))
+            if name:
+                album.name = name
+            if song_id:
+                album.songs.append(db.one_or_404(
+                    db.select(Song).filter_by(id=song_id)))
+            if band_id:
+                album.bands = band_id
+            if genre_id:
+                album.genres.append(db.one_or_404(
+                    db.select(Genre).filter_by(id=genre_id)))
+
+            db.session.commit()
+            return album_schema(album)
 
 
 class QuerySongs(Resource):
