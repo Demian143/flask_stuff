@@ -40,10 +40,18 @@ class QueryAlbums(Resource):
             return {"message": "At least one name is required."}
 
     def delete(self):
-        # example: DELETE /albums/?name='deftones'
+        # example: DELETE /albums/?name='deftones' or id=1
         name = request.args.get('name')
         if name:
             album = db.one_or_404(db.select(Album).filter_by(name=name))
+            db.session.delete(album)
+            db.session.commit()
+
+            return album_schema(album)
+
+        id = request.args.get('id')
+        if id:
+            album = db.one_or_404(db.select(Album).filter_by(id=id))
             db.session.delete(album)
             db.session.commit()
 
