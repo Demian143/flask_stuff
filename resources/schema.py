@@ -5,8 +5,9 @@ def schema(obj: object) -> jsonify:
     """ Supports Song and Band object and returns a json. """
     id = obj.id
     name = obj.name
+    album = obj.album
 
-    return jsonify(id=id, name=name)
+    return jsonify(id=id, name=name, album=album)
 
 
 def genre_schema(obj: object) -> jsonify:
@@ -23,12 +24,12 @@ def album_schema(obj: object) -> jsonify:
     id = obj.id
     name = obj.name
 
-    song_id = obj.song_id if obj.song_id else None
-    band_id = obj.band_id if obj.band_id else None
-    genre_id = obj.genre_id if obj.genre_id else None
+    songs = [_song.name for _song in obj.songs]  # list comprehension
+    bands = obj.bands if obj.bands else None
+    genres = obj.genres if obj.genres else None
 
     return jsonify(id=id,
                    name=name,
-                   song_id=song_id,
-                   band_id=band_id,
-                   genre_id=genre_id)
+                   song_id=songs,
+                   band_id=bands,
+                   genre_id=genres)
